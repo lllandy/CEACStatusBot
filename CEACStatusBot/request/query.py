@@ -129,3 +129,35 @@ def query_status(application_num, captchaHandle:CaptchaHandle=OnnxCaptchaHandle(
             "success": False,
         }
     return result
+
+def update_last_update_date(last_update_date):
+    assert last_update_date is not None, "last_update_date is invalid"
+
+    repo_url = f"{os.getenv('GITHUB_SERVER_URL')}/{os.getenv('GITHUB_REPOSITORY')}"
+    last_update_var_name = os.getenv("LAST_UPDATE_DATE_VAR", "LAST_UPDATE_DATE")
+    url = f"{repo_url}/actions/variables/{last_update_var_name}"
+    github_token = os.getenv("GITHUB_TOKEN", "")
+
+    if not github_token:
+        print("github_token not set, unable to update variables")
+    
+    # Request headers
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {github_token}",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    
+    # Request body
+    data = {
+        "name": last_update_var_name,
+        "value": last_update_date
+    }
+    
+    try:
+        print(url, headers, data)
+        response = requests.patch(url, headers=headers, json=data)
+        response.raise_for_status()
+        print(f"Successfully updated variable {last_update_var_name}' to {last_update_date}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error updating variable: {e}")

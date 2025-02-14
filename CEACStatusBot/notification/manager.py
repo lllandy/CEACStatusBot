@@ -1,5 +1,5 @@
 from .handle import NotificationHandle
-from CEACStatusBot.request import query_status
+from CEACStatusBot.request import query_status, update_last_update_date
 from CEACStatusBot.captcha import CaptchaHandle,OnnxCaptchaHandle
 
 class NotificationManager():
@@ -11,28 +11,12 @@ class NotificationManager():
     def addHandle(self, notificationHandle:NotificationHandle) -> None:
         self.__handleList.append(notificationHandle)
 
-    def send(self,) -> None:
+    def send(self, last_update_date, always_notify=False) -> None:
         res = query_status(self.__number, self.__captchaHandle)
+        
+        if res["case_last_updated"] != last_update_date:
+            update_last_update_date(res["case_last_updated"])
 
-        # if res['status'] == "Refused":
-        #     import os,pytz,datetime
-        #     try:
-        #         TIMEZONE = os.environ["TIMEZONE"]
-        #         localTimeZone = pytz.timezone(TIMEZONE)
-        #         localTime = datetime.datetime.now(localTimeZone)
-        #     except pytz.exceptions.UnknownTimeZoneError:
-        #         print("UNKNOWN TIMEZONE Error, use default")
-        #         localTime = datetime.datetime.now()
-        #     except KeyError:
-        #         print("TIMEZONE Error")
-        #         localTime = datetime.datetime.now()
-
-        #     if localTime.hour < 8 or localTime.hour > 22:
-        #         print("In Manager, no disturbing time")
-        #         return
-        #     if localTime.minute > 30:
-        #         print("In Manager, no disturbing time")
-        #         return
-
-        for notificationHandle in self.__handleList:
-            notificationHandle.send(res)
+        if res["case_last_updated"] != last_update_date or always_notify:
+            for notificationHandle in self.__handleList:
+                notificationHandle.send(res)

@@ -28,4 +28,6 @@ try:
 except KeyError:
     print("Telegram bot notification config error")
 
-notificationManager.send()
+LAST_UPDATE_DATE = os.environ.get("LAST_UPDATE_DATE", "")
+ALWAYS_NOTIFY = os.environ.get("ALWAYS_NOTIFY", "False").lower() in ("true", "1")
+notificationManager.send(LAST_UPDATE_DATE, ALWAYS_NOTIFY)
