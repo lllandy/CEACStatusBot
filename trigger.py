@@ -4,7 +4,10 @@ from CEACStatusBot import NotificationManager,EmailNotificationHandle,TelegramNo
 
 try:
     NUMBER = os.environ["NUMBER"]
-    notificationManager = NotificationManager(NUMBER)
+    PASSPORT_NUM = os.environ["PASSPORT_NUM"]
+    SURNAME = os.environ["SURNAME"]
+    notificationManager = NotificationManager(NUMBER, PASSPORT_NUM, SURNAME)
+    
 except KeyError:
     print("LOCATION or NUMBER Error")
 

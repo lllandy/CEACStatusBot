@@ -36,6 +36,8 @@ jobs:
       - name: execute py script # run main.py
         env:
           NUMBER: ${{ secrets.NUMBER }}
+          SURNAME: ${{ secrets.SURNAME }}
+          PASSPORT_NUM: ${{ secrets.PASSPORT_NUM }}
           FROM: ${{ secrets.FROM }}
           TO: ${{ secrets.TO }}
           PASSWORD: ${{ secrets.PASSWORD }}
